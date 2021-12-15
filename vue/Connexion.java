@@ -71,9 +71,12 @@ public class Connexion extends JFrame implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand() == "connexion"){
-			//DOA.Bdd.connexionUtilisateur(champsMail.getText(),champsMotDePasse.getText());
-			// si valide ouvre la vue annonce
-			// this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+			int idUser;
+			idUser = DAO.Bdd.connexionCompte(champsMail.getText(),champsMotDePasse.getText());
+			if(idUser != -1) {
+				// si valide ouvre la vue annonce
+				this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+			}
 			// new Annonces();
 		}
 		

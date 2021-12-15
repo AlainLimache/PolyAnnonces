@@ -106,9 +106,14 @@ public class Inscription extends JFrame implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand() == "inscription"){
 			
-			// DOA.Bdd.ajouterUtilisateur();
+			 boolean requeteOK;
+			 requeteOK = DAO.Bdd.creationCompte(champsNom.getText(),champsPrenom.getText(),champsMail.getText(),champsMotDePasse.getText(),champsAdresse.getText(),champsVille.getText());
+			 
 			// si valide ouvre la vue connexion
-			// this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+			 if(requeteOK) {
+				 this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+				 new Connexion();
+			 }
 		}
 		
 		if (e.getActionCommand() == "retour"){
