@@ -36,6 +36,37 @@ public class Bdd {
 		      
 	}
 	
+	public static Object[][] getAnnonces() {
+		try {
+			String sql = "COUNT(*) FROM Annonce;";
+			stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			int nbLignes = rs.getInt(1);
+			Object[][] data = new Object[nbLignes][];
+			
+			sql = "SELECT a.Catégorie, a.Description, a.Prix, u.Nom AS Vendeur "
+					+ "FROM Annonce AS a "
+					+ "JOIN Utilisateur AS u ON u.IdUtilisateur=a.IdUtilisateur;";
+			stmt = c.createStatement();
+			rs = stmt.executeQuery(sql);
+			int i = 0;
+			while(rs.next()) {
+				data[i][0] = rs.getString("Catégorie");
+				data[i][1] = rs.getString("Description");
+				data[i][2] = rs.getString("Adresse");
+				data[i][3] = rs.getString("Ville");
+				data[i][4] = rs.getInt("Prix");
+				data[i][5] = rs.getString("Vendeur");
+				i++;
+			}
+			return data;
+		}
+		catch(SQLException e) {
+			System.out.println("Erreur getAnnonces : "+ e);
+		    return null;
+		}
+	}
+	
 
 	@SuppressWarnings("resource")
 	public static void ajouterAnnonce(Utilisateur user) {
