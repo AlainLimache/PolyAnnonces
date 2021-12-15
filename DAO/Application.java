@@ -11,7 +11,8 @@ public class Application {
 	    	  System.out.println("Pilote non trouvé!");
 	    	  System.exit(1);
 	    }
-	      
+	    
+		Bdd.connexion();
 		new menuPrincipal();
 		
 	}
