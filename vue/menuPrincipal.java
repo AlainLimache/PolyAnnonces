@@ -6,8 +6,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import model.Utilisateur;
-
 public class menuPrincipal extends JFrame implements ActionListener{
 
 	/**
@@ -28,17 +26,17 @@ public class menuPrincipal extends JFrame implements ActionListener{
         btn1 = new JButton("Inscription");
         btn1.addActionListener(this);
         btn1.setActionCommand("inscription"); 	
-        btn1.setPreferredSize(new Dimension(180,45));
+        btn1.setPreferredSize(new Dimension(200,45));
         
         btn2 = new JButton("Connexion");
         btn2.addActionListener(this);
         btn2.setActionCommand("connexion"); 
-        btn2.setPreferredSize(new Dimension(180,45));
+        btn2.setPreferredSize(new Dimension(200,45));
         
-        btn3 = new JButton("Afficher les annonces");
+        btn3 = new JButton("Rechercher des annonces");
         btn3.addActionListener(this);
-        btn3.setActionCommand("afficher"); 		
-        btn3.setPreferredSize(new Dimension(180,45));
+        btn3.setActionCommand("recherches"); 		
+        btn3.setPreferredSize(new Dimension(200,45));
         
     	JPanel panel = new JPanel();
    
@@ -64,8 +62,8 @@ public class menuPrincipal extends JFrame implements ActionListener{
 			new Connexion(this);
 		}
 		
-		if (e.getActionCommand() == "afficher"){
-			new Annonces(new Utilisateur(0));
+		if (e.getActionCommand() == "recherches"){
+			new Recherche();
 		}
 	}
 

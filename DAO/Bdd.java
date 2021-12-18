@@ -25,11 +25,11 @@ public class Bdd {
 	public static void connexion() {
 		   
 		Properties userInfo = new Properties();
-		userInfo.setProperty("user", "root");
-		userInfo.setProperty("password",  "password");
+		userInfo.setProperty("user", "alain");
+		userInfo.setProperty("password",  "alainlimache1798");
 
 		try {
-			c = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDD", userInfo);
+			c = DriverManager.getConnection("jdbc:mysql://localhost:3306/polyVentes", userInfo);
 		  
 		} catch (SQLException ex2) {
 		    	  
@@ -241,7 +241,7 @@ public class Bdd {
 		Pattern pPrix = Pattern.compile("[0-9]*\\.[0-9]*");
 		Matcher mPrix = pPrix.matcher(prix);
 		prixOk = mPrix.matches();
-			
+
 		if(!prixOk) {
 			// Fenêtre d'alerte
 			String message = "Attention, il faut un prix de la forme : ??.?? ";
@@ -251,28 +251,70 @@ public class Bdd {
 		}
 		try{
 			String requete = "INSERT INTO Offre (Prix, Message, IdAnnonce, IdUtilisateur) VALUES (?, ?, ?, ?);";
-			
+
 			 pst = c.prepareStatement(requete);
 	    	 pst.setDouble(1, Double.valueOf(prix));
 	    	 pst.setString(2, msg);
 	    	 pst.setInt(3, annonceId);
 	    	 pst.setInt(4, userId);
 			 pst.executeUpdate();
-			
+
 			 System.out.println("Offre envoyée !");
 			 return true;
 		}
-		
-		
+
+
 		catch(SQLException e) {
 			System.out.println("Erreur : requete d'offre echouée ");
 			e.printStackTrace();
 			return false;
 		}
 	}
-	
+
 	public static Object[][] getOffres(){
 		return null;
 	}
 
+	public static Object[][] recherche(String argPrixMin, String argPrixMax, String argCategorie, String argVille) {
+		
+		
+        try {
+              	
+            String sql = "SELECT COUNT(*) FROM Annonce;";
+            stmt = c.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            int nbLignes;
+            if(rs.next()) {
+                nbLignes = rs.getInt(1);
+            }
+            else
+            {
+                System.out.println("Error with SQL Query on table Annonce");
+                nbLignes = 20;
+            }
+            Object[][] data = new Object[nbLignes][6];
+            
+            sql = "SELECT a.Catégorie, a.Description, a.Prix, u.Nom AS Vendeur, a.Adresse, a.Ville "
+                    + "FROM Annonce AS a "
+                    + "JOIN Utilisateur AS u ON u.IdUtilisateur=a.IdUtilisateur "
+                    + "WHERE a.Prix < " + argPrixMax + " AND a.Prix > " + argPrixMin + " AND a.Catégorie='" + argCategorie + "' AND a.Ville='" + argVille + "';";
+            stmt = c.createStatement();
+            rs = stmt.executeQuery(sql);
+            int i = 0;
+            while(rs.next() && i < nbLignes) {
+                data[i][0] = rs.getString("Catégorie");
+                data[i][1] = rs.getString("Description");
+                data[i][4] = String.valueOf(rs.getFloat("Prix"));
+                data[i][5] = rs.getString("Vendeur");
+                data[i][2] = rs.getString("Adresse");
+                data[i][3] = rs.getString("Ville");
+                i++;
+            }
+            return data;
+        }
+        catch(SQLException e) {
+            System.out.println("Erreur getAnnonces : "+ e);
+            return null;
+        }
+	}
 }

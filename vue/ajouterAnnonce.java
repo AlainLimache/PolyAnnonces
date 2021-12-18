@@ -28,7 +28,6 @@ public class ajouterAnnonce extends JFrame implements ActionListener{
 	JLabel textDescription;
 	JLabel textAdresse;
 	JLabel textVille;
-	JTextField champsCategorie;
 	JTextField champsPrix;
 	JTextField champsDescription;
 	JTextField champsAdresse;

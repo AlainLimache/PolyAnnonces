@@ -52,7 +52,6 @@ public class Annonces extends JFrame implements ActionListener {
     	table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     	table.setAutoCreateRowSorter(true);
     	
-    	
     	this.getContentPane().setLayout(
     	        new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
     	this.getContentPane().add(table.getTableHeader());
@@ -72,8 +71,9 @@ public class Annonces extends JFrame implements ActionListener {
 	        			(String)table.getValueAt(row, 4),
 	        			(String)table.getValueAt(row, 5));
     	    }
+    	    
     	    public void mouseReleased(MouseEvent e) {
-    	    	
+
     	    }
     	});
     	
@@ -110,7 +110,7 @@ public class Annonces extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand() == "ajouter"){
-			new ajouterAnnonce(this.getUser(), this);
+			new ajouterAnnonce(this.getUser(),this);
 		}
 		
 		if (e.getActionCommand() == "actualiser"){
@@ -121,7 +121,7 @@ public class Annonces extends JFrame implements ActionListener {
 		}
 		
 		if (e.getActionCommand() == "recherche"){
-			
+			new Recherche();
 		}
 		
 	}
