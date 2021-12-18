@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 
 import DAO.Bdd;
@@ -36,46 +35,16 @@ public class Annonces extends JFrame implements ActionListener {
 		btnRecherche.addActionListener(this);
 		btnRecherche.setActionCommand("recherche"); 
     	
-		if(this.getUser().getId() == 0) {
-			this.setTitle("Annonces (invité)");
-			initTableau();
-			
-	        
-	    	JPanel panel = new JPanel(new GridLayout(1,2,1,1));
-	   
-	    	panel.add(btnActualiser); 	
-	    	panel.add(btnRecherche); 	
-	    	
-	    	this.getContentPane().add(panel);
-	    	
-		}else{
-			this.setTitle("Annonces ( " + this.getUser().getPrenom() + " " + this.getUser().getNom() + " )");
-			
-	    	initTableau();
-	    	btnAjouterAnnonce = new JButton("Ajouter");
-	    	btnAjouterAnnonce.addActionListener(this);
-	    	btnAjouterAnnonce.setActionCommand("ajouter"); 
-
-	    	this.getContentPane().add(btnAjouterAnnonce);
-	    	JPanel panel = new JPanel(new GridLayout(1,2,1,1));
-	    	panel.add(btnAjouterAnnonce); 
-	    	panel.add(btnActualiser); 	
-	    	panel.add(btnRecherche); 	
-	    	
-	    	this.getContentPane().add(panel);
-	    	
-		    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		}
+		this.init(this.getUser().getId());
 		
     	this.setLocationRelativeTo(null); 	
     
-    	this.pack();
-    	this.setVisible(true);
+       	this.setVisible(true);
     	    	
     }
     
 	
-    public void initTableau(){
+    public void init(int idConnexion){
 
 	    String[] headers = {"Catégorie", "Description", "Adresse", "Ville", "Prix", "Vendeur"};
 	    
@@ -97,17 +66,48 @@ public class Annonces extends JFrame implements ActionListener {
     	        System.out.println("Column index selected " + col + " " + name);
     	    }
     	});
+    	
+		if(idConnexion == 0) {
+			this.setTitle("Annonces (invité)");	
+	        
+	    	JPanel panel = new JPanel(new GridLayout(1,2,1,1));
+	   
+	    	panel.add(btnRecherche); 
+	    	
+	    	this.getContentPane().add(panel);
+	    	this.pack();
+	    	
+		}else{
+			this.setTitle("Annonces ( " + this.getUser().getPrenom() + " " + this.getUser().getNom() + " )");
+			
+	    	btnAjouterAnnonce = new JButton("Ajouter");
+	    	btnAjouterAnnonce.addActionListener(this);
+	    	btnAjouterAnnonce.setActionCommand("ajouter"); 
+
+	    	this.getContentPane().add(btnAjouterAnnonce);
+	    	JPanel panel = new JPanel(new GridLayout(1,2,1,1));
+	    	panel.add(btnAjouterAnnonce); 
+	    	panel.add(btnActualiser); 	
+	    	panel.add(btnRecherche); 	
+	    	
+	    	this.getContentPane().add(panel);
+	    	this.pack();
+		    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		}
     }
+    
     
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand() == "ajouter"){
-			new ajouterAnnonce(this.getUser());
+			new ajouterAnnonce(this.getUser(),this);
 		}
 		
 		if (e.getActionCommand() == "actualiser"){
-			
-
+			this.getContentPane().removeAll();
+			this.getContentPane().revalidate();
+			this.getContentPane().repaint();
+			init(this.getUser().getId());
 		}
 		
 		if (e.getActionCommand() == "recherche"){

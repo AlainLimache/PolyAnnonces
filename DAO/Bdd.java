@@ -56,7 +56,7 @@ public class Bdd {
             }
             Object[][] data = new Object[nbLignes][6];
             
-            sql = "SELECT a.Catégorie, a.Description, a.Prix, u.Nom AS Vendeur, u.adresse, u.ville "
+            sql = "SELECT a.Catégorie, a.Description, a.Prix, u.Nom AS Vendeur, a.Adresse, a.Ville "
                     + "FROM Annonce AS a "
                     + "JOIN Utilisateur AS u ON u.IdUtilisateur=a.IdUtilisateur;";
             stmt = c.createStatement();
@@ -79,7 +79,7 @@ public class Bdd {
         }
     }
 
-	public static boolean ajouterAnnonce(String argPrix, String argDescription, String argCategorie, int argIdUser) {
+	public static boolean ajouterAnnonce(String argPrix, String argDescription, String argCategorie, int argIdUser, String argAdresse, String argVille) {
 		
 	    String requete = "";  
 	    Double prix = Double.parseDouble(argPrix);
@@ -98,7 +98,7 @@ public class Bdd {
 			return false;
 		}
 		
-	    if(argDescription.contentEquals("") || argCategorie.contentEquals("")) {
+	    if(argDescription.contentEquals("") || argCategorie.contentEquals("") || argAdresse.contentEquals("") || argVille.contentEquals("")) {
 			// Fenêtre d'alerte
 			String message = "Veuillez remplir les champs";
 			JLabel lbmsg = new JLabel(message, SwingConstants.CENTER);
@@ -106,7 +106,7 @@ public class Bdd {
 	    	return false;
 	    }
 	
-	    requete = "INSERT INTO Annonce(Prix, Description, Catégorie, IdUtilisateur) VALUES(?,?,?,?)";
+	    requete = "INSERT INTO Annonce(Prix, Description, Catégorie, IdUtilisateur, Adresse, Ville) VALUES(?,?,?,?,?,?)";
 
 	    try {
 	    	 pst = c.prepareStatement(requete);
@@ -114,6 +114,8 @@ public class Bdd {
 	    	 pst.setString(2, argDescription);
 	    	 pst.setString(3, argCategorie);
 	    	 pst.setInt(4, argIdUser);
+	    	 pst.setString(5, argAdresse);
+	    	 pst.setString(6, argVille);
 			 pst.executeUpdate();
 	 
 	    } catch (SQLException e) {

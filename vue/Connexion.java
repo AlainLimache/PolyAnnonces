@@ -66,6 +66,8 @@ public class Connexion extends JFrame implements ActionListener{
     	panel.add(btnOk); 	
     	panel.add(btnRetour); 	
     	
+    	getRootPane().setDefaultButton(btnOk);
+    	
     	this.setContentPane(panel);
 	    this.setVisible(true);
 	}

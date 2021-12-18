@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -25,20 +26,25 @@ public class ajouterAnnonce extends JFrame implements ActionListener{
 	JLabel textCategorie;
 	JLabel textPrix;
 	JLabel textDescription;
+	JLabel textAdresse;
+	JLabel textVille;
 	JTextField champsCategorie;
 	JTextField champsPrix;
 	JTextField champsDescription;
+	JTextField champsAdresse;
+	JTextField champsVille;
+	JComboBox<String> categories;
+	JFrame f;
 	
-	
-	public ajouterAnnonce(Utilisateur argUser) {
+	public ajouterAnnonce(Utilisateur argUser,JFrame fenetre) {
 	
 		setTitle("Ajouter une annonce");
 				
-		setSize(500, 200);
+		setSize(500, 250);
 	    setLocationRelativeTo(null);
 	    
 	    this.setUser(argUser);
-	    
+	    f = fenetre;
 	    textCategorie = new JLabel("Catégorie : ");
 	    textCategorie.setHorizontalAlignment(JLabel.CENTER);
 	    
@@ -47,11 +53,23 @@ public class ajouterAnnonce extends JFrame implements ActionListener{
 	    
 	    textDescription = new JLabel("Description : ");
 	    textDescription.setHorizontalAlignment(JLabel.CENTER); 
+
+	    textAdresse = new JLabel("Adresse : ");
+	    textAdresse.setHorizontalAlignment(JLabel.CENTER);
 	    
-	    champsCategorie = new JTextField();
+	    textVille = new JLabel("Ville : ");
+	    textVille.setHorizontalAlignment(JLabel.CENTER); 
+	    
 	    champsPrix = new JTextField();
 	    champsDescription = new JTextField();
+	    champsAdresse = new JTextField();
+	    champsVille = new JTextField();
 	    
+	    categories = new JComboBox<String>();
+	    categories.addItem("Maison");
+	    categories.addItem("Appartement");
+	    categories.addItem("autre");  
+	    	    	    
 	    btnAjouter = new JButton("Ajouter");
 	    btnAjouter.addActionListener(this);
 	    btnAjouter.setActionCommand("ajouter"); 	
@@ -62,10 +80,10 @@ public class ajouterAnnonce extends JFrame implements ActionListener{
 	    btnAnnuler.setActionCommand("annuler"); 
 	    btnAnnuler.setPreferredSize(new Dimension(180,45));
         
-    	JPanel panel = new JPanel(new GridLayout(4,2,1,1));
+    	JPanel panel = new JPanel(new GridLayout(6,2,1,1));
    
     	panel.add(textCategorie); 
-    	panel.add(champsCategorie); 
+    	panel.add(categories); 
     	
     	panel.add(textPrix); 
     	panel.add(champsPrix); 
@@ -73,9 +91,17 @@ public class ajouterAnnonce extends JFrame implements ActionListener{
     	panel.add(textDescription); 
     	panel.add(champsDescription); 
     	
+    	panel.add(textAdresse); 
+    	panel.add(champsAdresse); 
+    	
+    	panel.add(textVille); 
+    	panel.add(champsVille); 
+    	
     	panel.add(btnAjouter); 
     	panel.add(btnAnnuler); 
     	
+    	getRootPane().setDefaultButton(btnAjouter);
+    	 
     	this.setContentPane(panel);
 	    this.setVisible(true);
 	}
@@ -86,16 +112,16 @@ public class ajouterAnnonce extends JFrame implements ActionListener{
 		if (e.getActionCommand() == "ajouter"){
 			
 			 boolean requeteOK;
-			 requeteOK = DAO.Bdd.ajouterAnnonce(champsPrix.getText(),champsDescription.getText(),champsCategorie.getText(),this.getUser().getId());
+			 requeteOK = DAO.Bdd.ajouterAnnonce(champsPrix.getText(),champsDescription.getText(),categories.getSelectedItem().toString(),this.getUser().getId(), champsAdresse.getText(), champsVille.getText());
 			 
 			 if(requeteOK) {
-				this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+				//this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 				
 				// Fenêtre d'alerte
 				String message = "Annonce ajouté !";
 				JLabel lbmsg = new JLabel(message, SwingConstants.CENTER);
 				model.Alerte.fenetreDialogue(lbmsg, "Ajout annonce", 2 * 1000);
-	
+				
 			 }
 		}
 		
