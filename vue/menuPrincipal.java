@@ -6,6 +6,8 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import model.Utilisateur;
+
 public class menuPrincipal extends JFrame implements ActionListener{
 
 	/**
@@ -59,11 +61,11 @@ public class menuPrincipal extends JFrame implements ActionListener{
 		}
 		
 		if (e.getActionCommand() == "connexion"){
-			new Connexion();
+			new Connexion(this);
 		}
 		
 		if (e.getActionCommand() == "afficher"){
-
+			new Annonces(new Utilisateur(0));
 		}
 	}
 

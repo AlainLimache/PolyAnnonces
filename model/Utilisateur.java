@@ -10,6 +10,10 @@ public class Utilisateur {
 	private String adresse;
 	private String ville;
 	
+	public Utilisateur(int argId) {
+		setId(argId);
+	}
+	
 	public Utilisateur(int argId, String argNom, String argPrenom, String argMail, String argMotDePasse, String argAdresse, String argVille ) {
 		setId(argId);
 		setNom(argNom);

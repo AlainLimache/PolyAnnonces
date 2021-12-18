@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 public class Inscription extends JFrame implements ActionListener{
 
@@ -109,10 +110,13 @@ public class Inscription extends JFrame implements ActionListener{
 			 boolean requeteOK;
 			 requeteOK = DAO.Bdd.creationCompte(champsNom.getText(),champsPrenom.getText(),champsMail.getText(),champsMotDePasse.getText(),champsAdresse.getText(),champsVille.getText());
 			 
-			// si valide ouvre la vue connexion
 			 if(requeteOK) {
-				 this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-				 new Connexion();
+				this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+				
+				// Fenêtre d'alerte
+				String message = "Inscription réussit !";
+				JLabel lbmsg = new JLabel(message, SwingConstants.CENTER);
+				model.Alerte.fenetreDialogue(lbmsg, "Inscription", 2 * 1000);
 			 }
 		}
 		

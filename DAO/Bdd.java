@@ -8,7 +8,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,92 +41,86 @@ public class Bdd {
 	}
 	
 	public static Object[][] getAnnonces() {
-		try {
-			String sql = "COUNT(*) FROM Annonce;";
-			stmt = c.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
-			int nbLignes = rs.getInt(1);
-			Object[][] data = new Object[nbLignes][];
-			
-			sql = "SELECT a.Catégorie, a.Description, a.Prix, u.Nom AS Vendeur "
-					+ "FROM Annonce AS a "
-					+ "JOIN Utilisateur AS u ON u.IdUtilisateur=a.IdUtilisateur;";
-			stmt = c.createStatement();
-			rs = stmt.executeQuery(sql);
-			int i = 0;
-			while(rs.next()) {
-				data[i][0] = rs.getString("Catégorie");
-				data[i][1] = rs.getString("Description");
-				data[i][2] = rs.getString("Adresse");
-				data[i][3] = rs.getString("Ville");
-				data[i][4] = rs.getInt("Prix");
-				data[i][5] = rs.getString("Vendeur");
-				i++;
-			}
-			return data;
-		}
-		catch(SQLException e) {
-			System.out.println("Erreur getAnnonces : "+ e);
-		    return null;
-		}
-	}
-	
+        try {
+            String sql = "SELECT COUNT(*) FROM Annonce;";
+            stmt = c.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            int nbLignes;
+            if(rs.next()) {
+                nbLignes = rs.getInt(1);
+            }
+            else
+            {
+                System.out.println("Error with SQL Query on table Annonce");
+                nbLignes = 20;
+            }
+            Object[][] data = new Object[nbLignes][6];
+            
+            sql = "SELECT a.Catégorie, a.Description, a.Prix, u.Nom AS Vendeur, u.adresse, u.ville "
+                    + "FROM Annonce AS a "
+                    + "JOIN Utilisateur AS u ON u.IdUtilisateur=a.IdUtilisateur;";
+            stmt = c.createStatement();
+            rs = stmt.executeQuery(sql);
+            int i = 0;
+            while(rs.next() && i < nbLignes) {
+                data[i][0] = rs.getString("Catégorie");
+                data[i][1] = rs.getString("Description");
+                data[i][4] = rs.getInt("Prix");
+                data[i][5] = rs.getString("Vendeur");
+                data[i][2] = rs.getString("Adresse");
+                data[i][3] = rs.getString("Ville");
+                i++;
+            }
+            return data;
+        }
+        catch(SQLException e) {
+            System.out.println("Erreur getAnnonces : "+ e);
+            return null;
+        }
+    }
 
-	@SuppressWarnings("resource")
-	public static void ajouterAnnonce(Utilisateur user) {
+	public static boolean ajouterAnnonce(String argPrix, String argDescription, String argCategorie, int argIdUser) {
 		
 	    String requete = "";  
+	    Double prix = Double.parseDouble(argPrix);
 	    
-	    Scanner sc ;
-	    
-	    System.out.println("Entrez un prix : ");
-		sc = new Scanner(System.in);
-		Double prix = sc.nextDouble();
+		boolean prixOk;
 		
-	    System.out.println("Entrez une description : ");
-		sc = new Scanner(System.in);
-		String description = sc.nextLine();
+		Pattern pPrix = Pattern.compile("[0-9]*\\.[0-9]*");
+		Matcher mPrix = pPrix.matcher(argPrix);
+		prixOk = mPrix.matches();
+			
+		if(!prixOk) {
+			// Fenêtre d'alerte
+			String message = "Attention, il faut un prix de la forme : ??.?? ";
+			JLabel lbmsg = new JLabel(message, SwingConstants.CENTER);
+			model.Alerte.fenetreDialogue(lbmsg, "Erreur format Prix", 2 * 1000);
+			return false;
+		}
 		
-	    System.out.println("Entrez une catégorie : ");
-		sc = new Scanner(System.in);
-		String categorie = sc.nextLine();
-						
+	    if(argDescription.contentEquals("") || argCategorie.contentEquals("")) {
+			// Fenêtre d'alerte
+			String message = "Veuillez remplir les champs";
+			JLabel lbmsg = new JLabel(message, SwingConstants.CENTER);
+			model.Alerte.fenetreDialogue(lbmsg, "Erreur annonce", 3 * 1000);
+	    	return false;
+	    }
 	
-	    requete = "INSERT INTO Annonce(Prix, Description, Categorie, IdUtilisateur) VALUES(?,?,?,?)";
+	    requete = "INSERT INTO Annonce(Prix, Description, Catégorie, IdUtilisateur) VALUES(?,?,?,?)";
 
 	    try {
 	    	 pst = c.prepareStatement(requete);
 	    	 pst.setDouble(1, prix);
-	    	 pst.setString(2, description);
-	    	 pst.setString(3, categorie);
-	    	 pst.setInt(4, user.getId());
+	    	 pst.setString(2, argDescription);
+	    	 pst.setString(3, argCategorie);
+	    	 pst.setInt(4, argIdUser);
 			 pst.executeUpdate();
 	 
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    }
-
-	}
-
-	public static void extraireAnnonces() {
-		
-	    String requete = "";  
 	    
-	    Scanner sc ;
-	    
-	    requete = "SELECT * FROM Annonce";
-
-	    try {
-	         Statement stmt = c.createStatement();
-	         ResultSet resultats = stmt.executeQuery(requete);
-	         while(resultats.next()){
-					resultats.getRowId(0);
-			}
-	         
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
-
+	     return true;
 	}
 	
 	public static boolean creationCompte(String argNom, String argPrenom, String argMail, String argMotDePasse, String argAdresse, String argVille) {
@@ -150,7 +143,7 @@ public class Bdd {
 				model.Alerte.fenetreDialogue(lbmsg, "Erreur format Mail", 3 * 1000);
 				return false;
 			}
-				
+						
 			Pattern pMdp = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$");
 			Matcher mMdp = pMdp.matcher(argMotDePasse);
 			mdpOk = mMdp.matches();
@@ -169,6 +162,14 @@ public class Bdd {
 				return false;
 			}
 			
+			
+			if(argNom.contentEquals("") || argPrenom.contentEquals("") || argAdresse.contentEquals("") || argVille.contentEquals("")) {
+				// Fenêtre d'alerte
+				String message = "Veuillez remplir les champs";
+				JLabel lbmsg = new JLabel(message, SwingConstants.CENTER);
+				model.Alerte.fenetreDialogue(lbmsg, "Erreur inscription", 3 * 1000);
+				return false;
+			}
 			
 			pst.setString (1, argNom);
 			pst.setString (2, argPrenom);
@@ -207,6 +208,30 @@ public class Bdd {
 			e.printStackTrace();
 			return -1;
 		}
+	}
+	
+	public static Utilisateur getUser(int argUserId) {
+		Utilisateur user;
+		
+		try{
+			
+			String query = "SELECT * FROM Utilisateur WHERE IdUtilisateur="+ argUserId +";";
+			
+			stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			
+			if(rs.next()) { 
+				user = new Utilisateur(rs.getInt(1),rs.getString(2),rs.getString(3),rs.getString(4),rs.getString(5),rs.getString(6),rs.getString(7));
+				return user;
+			}
+			
+
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 
 

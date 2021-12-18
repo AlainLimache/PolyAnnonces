@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 public class Connexion extends JFrame implements ActionListener{
 
@@ -23,15 +24,17 @@ public class Connexion extends JFrame implements ActionListener{
 	JLabel textMotDePasse;
 	JTextField champsMail;
 	JPasswordField champsMotDePasse;
+	JFrame fenetreMenu; 
 	
-	
-	public Connexion() {
+	public Connexion(JFrame argMenu) {
 	
 		setTitle("Connexion");
 				
 		setSize(400, 160);
 	    setLocationRelativeTo(null);
-	   
+	    
+	    fenetreMenu = argMenu;
+	    
 	    textMail = new JLabel("Mail : ");
 	    textMail.setHorizontalAlignment(JLabel.CENTER);
 	    
@@ -68,6 +71,7 @@ public class Connexion extends JFrame implements ActionListener{
 	}
 	
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand() == "connexion"){
@@ -76,6 +80,15 @@ public class Connexion extends JFrame implements ActionListener{
 			if(idUser != -1) {
 				// si valide ouvre la vue annonce
 				this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+				this.fenetreMenu.setVisible(false);
+				
+				// Fenêtre d'alerte
+				String message = "Connexion réussit !";
+				JLabel lbmsg = new JLabel(message, SwingConstants.CENTER);
+				model.Alerte.fenetreDialogue(lbmsg, "Connexion", 2 * 1000);
+				
+				new Annonces(DAO.Bdd.getUser(idUser));
+				
 			}
 			// new Annonces();
 		}
