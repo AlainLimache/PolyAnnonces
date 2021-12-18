@@ -49,6 +49,8 @@ public class Annonces extends JFrame implements ActionListener {
 	    String[] headers = {"Catégorie", "Description", "Adresse", "Ville", "Prix", "Vendeur"};
 	    
     	table = new JTable(new DefaultTableModel(Bdd.getAnnonces(), headers));
+    	table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    	table.setAutoCreateRowSorter(true);
     	
     	
     	this.getContentPane().setLayout(
@@ -58,12 +60,20 @@ public class Annonces extends JFrame implements ActionListener {
     	
     	
     	// listener
-    	table.getTableHeader().addMouseListener(new MouseAdapter() {
+    	table.addMouseListener(new MouseAdapter() {
     	    @Override
-    	    public void mouseClicked(MouseEvent e) {
-    	        int col = table.columnAtPoint(e.getPoint());
-    	        String name = table.getColumnName(col);
-    	        System.out.println("Column index selected " + col + " " + name);
+    	    public void mousePressed(MouseEvent e) {
+    	        int row = table.rowAtPoint(e.getPoint());
+	        	new detailAnnonce(user,
+	        			(String)table.getValueAt(row, 0),
+	        			(String)table.getValueAt(row, 1),
+	        			(String)table.getValueAt(row, 2), 
+	        			(String)table.getValueAt(row, 3),
+	        			(String)table.getValueAt(row, 4),
+	        			(String)table.getValueAt(row, 5));
+    	    }
+    	    public void mouseReleased(MouseEvent e) {
+    	    	
     	    }
     	});
     	
@@ -100,7 +110,7 @@ public class Annonces extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand() == "ajouter"){
-			new ajouterAnnonce(this.getUser(),this);
+			new ajouterAnnonce(this.getUser(), this);
 		}
 		
 		if (e.getActionCommand() == "actualiser"){
@@ -111,7 +121,7 @@ public class Annonces extends JFrame implements ActionListener {
 		}
 		
 		if (e.getActionCommand() == "recherche"){
-	
+			
 		}
 		
 	}

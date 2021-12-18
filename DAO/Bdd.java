@@ -25,11 +25,11 @@ public class Bdd {
 	public static void connexion() {
 		   
 		Properties userInfo = new Properties();
-		userInfo.setProperty("user", "alain");
-		userInfo.setProperty("password",  "alainlimache1798");
+		userInfo.setProperty("user", "root");
+		userInfo.setProperty("password",  "password");
 
 		try {
-			c = DriverManager.getConnection("jdbc:mysql://localhost:3306/polyVentes", userInfo);
+			c = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDD", userInfo);
 		  
 		} catch (SQLException ex2) {
 		    	  
@@ -65,7 +65,7 @@ public class Bdd {
             while(rs.next() && i < nbLignes) {
                 data[i][0] = rs.getString("Catégorie");
                 data[i][1] = rs.getString("Description");
-                data[i][4] = rs.getInt("Prix");
+                data[i][4] = String.valueOf(rs.getFloat("Prix"));
                 data[i][5] = rs.getString("Vendeur");
                 data[i][2] = rs.getString("Adresse");
                 data[i][3] = rs.getString("Ville");
@@ -236,5 +236,43 @@ public class Bdd {
 		return null;
 	}
 
+	public static boolean ajouterOffre(String prix, String msg, int annonceId, int userId) {
+		boolean prixOk;
+		Pattern pPrix = Pattern.compile("[0-9]*\\.[0-9]*");
+		Matcher mPrix = pPrix.matcher(prix);
+		prixOk = mPrix.matches();
+			
+		if(!prixOk) {
+			// Fenêtre d'alerte
+			String message = "Attention, il faut un prix de la forme : ??.?? ";
+			JLabel lbmsg = new JLabel(message, SwingConstants.CENTER);
+			model.Alerte.fenetreDialogue(lbmsg, "Erreur format Prix", 2 * 1000);
+			return false;
+		}
+		try{
+			String requete = "INSERT INTO Offre (Prix, Message, IdAnnonce, IdUtilisateur) VALUES (?, ?, ?, ?);";
+			
+			 pst = c.prepareStatement(requete);
+	    	 pst.setDouble(1, Double.valueOf(prix));
+	    	 pst.setString(2, msg);
+	    	 pst.setInt(3, annonceId);
+	    	 pst.setInt(4, userId);
+			 pst.executeUpdate();
+			
+			 System.out.println("Offre envoyée !");
+			 return true;
+		}
+		
+		
+		catch(SQLException e) {
+			System.out.println("Erreur : requete d'offre echouée ");
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public static Object[][] getOffres(){
+		return null;
+	}
 
 }
